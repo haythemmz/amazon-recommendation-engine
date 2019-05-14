@@ -8,10 +8,10 @@ df=pd.read_pickle("third.pkl")
 #%%
 
 vector=CountVectorizer()
-title_bag=vector.fit_transform(df['title'])
+title_bag=vector.fit_transform(df['title'].values)
 print(title_bag.get_shape())
-title_bag=title_bag.toarray()
-print(title_bag.shape)
+title_bag.todense(order=title_bag.get_shape())
+print(type(title_bag))
 
 #%%
 def bag_based_model(q_id,num_near):

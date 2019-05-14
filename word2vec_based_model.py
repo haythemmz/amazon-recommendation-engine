@@ -63,6 +63,8 @@ pickle.dump(word2vec_dict, pickle_out)
 pickle_out.close()
 
 #%%
+word2vec_dict=pickle.load( open( "word2vect_dict.pkl", "rb" ) )
+#%%
 vocab_lenght=len(words)
 sentences=df.shape[0]
 x=word2vec_dict[list(word2vec_dict.keys())[0]].shape[0]
@@ -77,18 +79,25 @@ for j in range(x):
         l.append('w'+str(j))
 print(l)
 #%%
+print(len(l))
+#%%
 df_w2v_mean=pd.DataFrame(data=word2vect_array,columns=l,index=df['asin'])
 
 #%%
 #def construct_w2v_matrix(df_w2v_mean,df):
 a=df.set_index('asin')
-print(a.index)
+print(len(list(a.index)))
 #%%
+title_dict=dict(zip(list(df['asin']), list(df['title'])))
+x=df_w2v_mean.shape[1]
 for j in df_w2v_mean.index:
-        sen=df[df['asin']=j]['title']
+        sen=title_dict[j]
         l=sen.split()
         arr=np.zeros((1,x))
         for k in l :
                 if k in word2vec_dict.keys():
+                        arr=arr+word2vec_dict[k].reshape((1,x))
+        m=np.mean(arr)
+        print(df_w2v_mean.loc[j,:])     
                 
 
