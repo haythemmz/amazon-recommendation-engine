@@ -65,7 +65,7 @@ pickle_out.close()
 #%%
 word2vec_dict=pickle.load( open( "word2vect_dict.pkl", "rb" ) )
 #%%
-vocab_lenght=len(words)
+#vocab_lenght=len(words)
 sentences=df.shape[0]
 x=word2vec_dict[list(word2vec_dict.keys())[0]].shape[0]
 #y=word2vec_dict[list(word2vec_dict.keys())[0]].shape[1]
@@ -88,6 +88,7 @@ df_w2v_mean=pd.DataFrame(data=word2vect_array,columns=l,index=df['asin'])
 a=df.set_index('asin')
 print(len(list(a.index)))
 #%%
+## need to convert to function 
 title_dict=dict(zip(list(df['asin']), list(df['title'])))
 x=df_w2v_mean.shape[1]
 for j in df_w2v_mean.index:
@@ -97,7 +98,23 @@ for j in df_w2v_mean.index:
         for k in l :
                 if k in word2vec_dict.keys():
                         arr=arr+word2vec_dict[k].reshape((1,x))
-        m=np.mean(arr)
-        print(df_w2v_mean.loc[j,:])     
+        m=arr*(1/len(l))
+        df_w2v_mean.loc[j,:]=m     
                 
-
+#%%
+df_w2v_mean.to_pickle("word2vect_average.pkl")
+#%%
+df_w2v_idf=pd.DataFrame(data=word2vect_array,columns=l,index=df['asin'])
+#%%
+x=df_w2v_idf.shape[1]
+for j in df_w2v_mean.index:
+        sen=title_dict[j]
+        l=sen.split()
+        arr=np.zeros((1,x))
+        for k in l :
+                if k in word2vec_dict.keys():
+                        arr=arr+idf_without_stemming_dict[k]*word2vec_dict[k].reshape((1,x))
+        
+        df_w2v_idf.loc[j,:]=arr  
+#%%
+df_w2v_idf.to_pickle("word2vect_idf.pkl")
